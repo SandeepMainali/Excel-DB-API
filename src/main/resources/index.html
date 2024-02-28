@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product List</title>
+    <style>
+        table {
+            margin-top: 10px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 10px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h2 {
+            text-align: center;
+            color: #00008B;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Product List</h2>
+
+<!-- Add search input field -->
+<!--<input type="text" id="searchInput" placeholder="Search by product name..." onkeyup="searchProduct()">-->
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+
+        <th>Filename</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="productTableBody">
+    <!-- Iterate over products using Thymeleaf -->
+    <tr th:each="product : ${products}">
+        <td th:text="${product.Id}">ID</td>
+        <td th:text="${product.filename}">
+            Filename</td>
+        <td><a th:href="@{'/view-pdf/' + ${product.filename}}" target="_blank">View PDF</a></td>
+    </tr>
+    </tbody>
+</table>
+
+<!--<script>-->
+<!--    function searchProduct() {-->
+<!--        // Declare variables-->
+<!--        var input, filter, table, tr, td, i, txtValue;-->
+<!--        input = document.getElementById("searchInput");-->
+<!--        filter = input.value.toUpperCase();-->
+<!--        table = document.getElementById("productTableBody");-->
+<!--        tr = table.getElementsByTagName("tr");-->
+
+<!--        // Loop through all table rows, and hide those who don't match the search query-->
+<!--        for (i = 0; i < tr.length; i++) {-->
+<!--            td = tr[i].getElementsByTagName("td")[2]; // Index 2 represents the Product Name column-->
+<!--            if (td) {-->
+<!--                txtValue = td.textContent || td.innerText;-->
+<!--                if (txtValue.toUpperCase().indexOf(filter) > -1) {-->
+<!--                    tr[i].style.display = "";-->
+<!--                } else {-->
+<!--                    tr[i].style.display = "none";-->
+<!--                }-->
+<!--            }-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+
+</body>
+</html>
