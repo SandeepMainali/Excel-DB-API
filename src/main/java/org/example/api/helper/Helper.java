@@ -1,50 +1,46 @@
 package org.example.api.helper;
 
-
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.example.api.Entity.Product;
+import org.example.api.repo.ProductRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import java.util.*;
 
 public class Helper {
 
+    private final ProductRepo productRepo;
 
+
+    public Helper(ProductRepo productRepo) {
+        this.productRepo = productRepo;
+    }
 
     public static boolean checkExcelFormat(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     }
 
-    public static List<String> getAllSheetNames(MultipartFile file) throws IOException {
-        List<String> sheetNames = new ArrayList<>();
-        try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-                sheetNames.add(workbook.getSheetName(i));
-            }
-        }
-        return sheetNames;
-    }
-
-    public static List<Product> convertExcelToListOfProduct(InputStream is, List<String> sheetNames) {
+    public List<Product> convertExcelToListOfProduct(InputStream is, List<String> sheetNames) {
         List<Product> list = new ArrayList<>();
+        Set<String> processedSheetNames = new HashSet<>(); // Store processed sheet names
 
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(is);
 
-            // Iterate through each provided sheet name
             for (String sheetName : sheetNames) {
-                // Trim the sheet name to remove leading/trailing whitespace
                 sheetName = sheetName.trim();
+
+                // Check if the sheet name has already been processed
+                if (processedSheetNames.contains(sheetName)) {
+                    System.out.println("Sheet '" + sheetName + "' has already been processed. Skipping.");
+                    continue;
+                }
 
                 XSSFSheet sheet = workbook.getSheet(sheetName);
 
@@ -55,7 +51,6 @@ public class Helper {
                     while (iterator.hasNext()) {
                         Row row = iterator.next();
 
-                        // Skip header row
                         if (rowNumber == 0) {
                             rowNumber++;
                             continue;
@@ -65,13 +60,13 @@ public class Helper {
                         int cid = 0;
                         Product p = new Product();
 
+                        // Set sheetName for each Product
+                        p.setSheetName(sheetName);
+
                         while (cells.hasNext()) {
                             Cell cell = cells.next();
 
                             switch (cid) {
-                                case 0:
-                                    p.setId((int) cell.getNumericCellValue());
-                                    break;
                                 case 1:
                                     String productName = cell.getStringCellValue();
                                     if (productName != null) {
@@ -85,7 +80,8 @@ public class Helper {
                                     }
                                     break;
                                 case 3:
-                                    p.setProductPrice(cell.getNumericCellValue());
+                                    Double productPrice = cell.getNumericCellValue();
+                                    p.setProductPrice(productPrice);
                                     break;
                                 default:
                                     break;
@@ -96,6 +92,9 @@ public class Helper {
                         list.add(p);
                         rowNumber++;
                     }
+
+                    // Mark the sheet name as processed
+                    processedSheetNames.add(sheetName);
                 } else {
                     System.out.println("Sheet '" + sheetName + "' not found in Excel file.");
                 }
@@ -110,6 +109,17 @@ public class Helper {
 
         return list;
     }
+
+    public static List<String> getAllSheetNames(MultipartFile file) throws IOException {
+        List<String> sheetNames = new ArrayList<>();
+        try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                sheetNames.add(workbook.getSheetName(i));
+            }
+        }
+        return sheetNames;
     }
+}
+
 
 

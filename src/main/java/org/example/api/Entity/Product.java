@@ -2,32 +2,35 @@ package org.example.api.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
-
-import java.sql.Blob;
 import java.time.LocalDateTime;
-
-
 @Entity
 @Table(name = "product")
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private int  productId;
     @Column(name = "product_name")
     private String productName;
 
     @Column(name = "product_desc")
     private String productDesc;
 
+
+
     @Column(name = "product_price")
     private double productPrice;
 
-    public Integer getId() {
-        return Id;
+
+    @Column(name = "sheet_name")
+    private String sheetName;
+
+    public String getSheetName() {
+        return sheetName;
     }
 
-    public void setId(Integer id) {
-        Id = id;
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
     }
 
     public LocalDateTime getCreateAt() {
@@ -37,23 +40,13 @@ public class Product {
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
-//    private Double productPrice;
 
     @Column(name = "filename")
     private String filename;
-
     @NotNull
     @JsonIgnore
     @Column(updatable = false)
     private LocalDateTime createAt;
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
 
 
     @Lob
@@ -67,12 +60,27 @@ public class Product {
     public void setContent(byte[] content) {
         this.content = content;
     }
+    public int getProductId() {
+        return productId;
+    }
 
-
-    public Product() {
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
 
+    public void setProductPrice(double productPrice) {
+        this.productPrice = productPrice;
+    }
+
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
     public String getProductName() {
         return productName;
@@ -97,4 +105,9 @@ public class Product {
     public void setProductPrice(Double productPrice) {
         this.productPrice = productPrice;
     }
+
+    public Product() {
+    }
+
+
 }

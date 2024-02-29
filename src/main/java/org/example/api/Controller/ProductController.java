@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,12 +17,12 @@ import java.io.IOException;
 import java.util.Map;
 
 
-@RestController
+@Controller
 
 public class ProductController {
 
     //  @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -53,20 +54,23 @@ public class ProductController {
     }
 
 
-    public String getAllProduct(Model model) {
-        List<Product> allProducts = productService.getAllProducts();
-        model.addAttribute("products", allProducts);
-        return "index"; // Assuming "index" is the name of your view/template
+    @GetMapping("/all")
+    public ResponseEntity<List<Product>> getProducts(@RequestParam(required = false) String sheetName) {
+        List<Product> products;
+        if (sheetName != null) {
+            products = productService.getAllProductsBySheetName(sheetName);
+        } else {
+            products = productService.getAllProducts();
+        }
+        return ResponseEntity.ok(products);
     }
 
-
-//    @GetMapping("/product")
-//    public String getAllProduct(Model model) {
-//        List<Product> products = productService.getAllProducts();
-//        model.addAttribute("products", products);
-//        return "index"; // This should return the name of your HTML template
-//    }
-
+    @GetMapping("/product")
+    public String getAllProduct(Model model) {
+        List<Product> products = productService.getAllProducts();
+        model.addAttribute("products", products);
+        return "index"; // This should return the name of your HTML template
+    }
 
     @GetMapping("/view-pdf/{filename}")
     public ResponseEntity<byte[]> viewPdf(@PathVariable String filename) {
@@ -82,4 +86,9 @@ public class ProductController {
     }
 
 
+
+
+
 }
+
+
