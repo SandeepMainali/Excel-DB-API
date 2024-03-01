@@ -9,7 +9,11 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int  productId;
+
+
+    @Column(name = "product_id")
+    private int productId;
+
     @Column(name = "product_name")
     private String productName;
 
@@ -69,10 +73,6 @@ public class Product {
     }
 
 
-    public void setProductPrice(double productPrice) {
-        this.productPrice = productPrice;
-    }
-
 
     public String getFilename() {
         return filename;
@@ -108,6 +108,5 @@ public class Product {
 
     public Product() {
     }
-
 
 }

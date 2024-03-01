@@ -6,7 +6,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.example.api.Entity.Product;
 import org.example.api.repo.ProductRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,9 +20,15 @@ public class Helper {
         this.productRepo = productRepo;
     }
 
+
+
     public static boolean checkExcelFormat(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    private int getProductIdFromExcel(Cell cell) {
+        return (int) cell.getNumericCellValue();
     }
 
     public List<Product> convertExcelToListOfProduct(InputStream is, List<String> sheetNames) {
@@ -67,6 +72,10 @@ public class Helper {
                             Cell cell = cells.next();
 
                             switch (cid) {
+                                case 0: // Assuming productId is in the first column
+                                    int productId = (int) cell.getNumericCellValue();
+                                    p.setProductId(productId);
+                                    break;
                                 case 1:
                                     String productName = cell.getStringCellValue();
                                     if (productName != null) {
