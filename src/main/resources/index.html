@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Product List</title>
+    <title>Product and PDF List</title>
     <style>
         table {
             margin-top: 10px;
@@ -20,11 +20,14 @@
             text-align: center;
             color: #00008B;
         }
+        .table-container {
+            margin-top: 20px; /* Adjust spacing as needed */
+        }
     </style>
 </head>
 <body>
 
-<h2>Product List</h2>
+<h2>Excel List</h2>
 
 <table>
     <thead>
@@ -33,24 +36,39 @@
         <th>Product Name</th>
         <th>Description</th>
         <th>Price</th>
-        <th>DateTime</th>
         <th>Sheet Name</th>
-        <th>Filename</th>
-        <th>Action</th>
     </tr>
     </thead>
     <tbody id="productTableBody">
     <!-- Iterate over products using Thymeleaf -->
-    <tr th:each="product : ${products}">
-        <td th:text="${product.productId}">ID</td>
-        <td th:text="${product.productName}">Product Name</td>
-        <td th:text="${product.productDesc}">Description</td>
-        <td th:text="${product.productPrice}">Price</td>
-        <td th:text="${product.sheetName}">Sheet Name</td>
+    <tr th:each="item : ${combinedList}">
+        <td th:if="${item.getClass().getSimpleName() == 'Product'}" th:text="${item.productId}">-</td>
+        <td th:if="${item.getClass().getSimpleName() == 'Product'}" th:text="${item.productName}">-</td>
+        <td th:if="${item.getClass().getSimpleName() == 'Product'}" th:text="${item.productDesc}">-</td>
+        <td th:if="${item.getClass().getSimpleName() == 'Product'}" th:text="${item.productPrice}">-</td>
+        <td th:if="${item.getClass().getSimpleName() == 'Product'}" th:text="${item.sheetName}">-</td>
+    </tr>
+    </tbody>
+</table>
 
-        <td th:text="${product.createAt}">Price</td>
-        <td th:text="${product.filename}">Filename</td>
-        <td><a th:href="@{'/view-pdf/' + ${product.filename}}" target="_blank">View PDF</a></td>
+<div class="table-container"></div> <!-- Empty div for spacing -->
+
+<h2>PDF List</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Filename</th>
+        <th>Create At</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="pdfTableBody">
+    <!-- Iterate over PDFs using Thymeleaf -->
+    <tr th:each="item : ${combinedList}">
+        <td th:if="${item.getClass().getSimpleName() == 'Pdf'}" th:text="${item.filename}">-</td>
+        <td th:if="${item.getClass().getSimpleName() == 'Pdf'}" th:text="${item.createAt}">-</td>
+        <td th:if="${item.getClass().getSimpleName() == 'Pdf'}"><a th:href="@{'/view-pdf/' + ${item.filename}}" target="#">View PDF</a></td>
     </tr>
     </tbody>
 </table>

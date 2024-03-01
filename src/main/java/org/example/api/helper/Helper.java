@@ -20,17 +20,10 @@ public class Helper {
         this.productRepo = productRepo;
     }
 
-
-
     public static boolean checkExcelFormat(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     }
-
-    private int getProductIdFromExcel(Cell cell) {
-        return (int) cell.getNumericCellValue();
-    }
-
     public List<Product> convertExcelToListOfProduct(InputStream is, List<String> sheetNames) {
         List<Product> list = new ArrayList<>();
         Set<String> processedSheetNames = new HashSet<>(); // Store processed sheet names
@@ -129,6 +122,3 @@ public class Helper {
         return sheetNames;
     }
 }
-
-
-
